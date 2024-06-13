@@ -1,4 +1,6 @@
 from tkinter import *
+import os
+import sys
 
 # ---------------------------- CONSTANTS ------------------------------- #
 PINK = "#e2979c"
@@ -11,6 +13,17 @@ SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 reps = 0
 timer = None
+
+# https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS2
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 # ---------------------------- TIMER RESET ------------------------------- # 
 
@@ -38,9 +51,11 @@ def start_timer():
     if reps % 8 == 0:
         timer_label.config(text='Long break', fg=RED)
         count_down(long_break_sec)
+        window.attributes('-topmost', True)
     elif reps % 2 == 0:
         timer_label.config(text='Short break', fg=PINK)
         count_down(short_break_sec)
+        window.attributes('-topmost', True)
     else:
         timer_label.config(text='Work time')
         count_down(work_break_sec)
@@ -72,7 +87,7 @@ window.config(padx=100,pady=50, bg=YELLOW)
 
 # tomato image and timer
 canvas = Canvas(width=200, height=224, bg=YELLOW)
-tomato_img = PhotoImage(file='tomato.png')
+tomato_img = PhotoImage(file=resource_path('tomato.png'))
 canvas.create_image(100, 112, image=tomato_img)
 canvas['highlightthickness'] = 0
 timer_text = canvas.create_text(100,130, text='00:00', font=(FONT_NAME, 35, 'bold'), fill='white')
